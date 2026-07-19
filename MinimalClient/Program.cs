@@ -10,6 +10,7 @@ class Program
         const string discoveryUrl = "opc.tcp://127.0.0.1:4840";
 
         const string pkiPath = "pki";
+        const bool autoAcceptUntrustedCertificates = true;
 
         if (Directory.Exists(pkiPath))
         {
@@ -39,7 +40,8 @@ class Program
                 },
                 TrustedPeerCertificates = new CertificateTrustList { StoreType = CertificateStoreType.Directory, StorePath = $"{pkiPath}/trusted" },
                 TrustedIssuerCertificates = new CertificateTrustList { StoreType = CertificateStoreType.Directory, StorePath = $"{pkiPath}/issuers" },
-                AutoAcceptUntrustedCertificates = true
+                RejectedCertificateStore = new CertificateTrustList { StoreType = CertificateStoreType.Directory, StorePath = $"{pkiPath}/rejected" },
+                AutoAcceptUntrustedCertificates = autoAcceptUntrustedCertificates
             }
         };
 
