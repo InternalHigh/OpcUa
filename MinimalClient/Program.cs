@@ -59,11 +59,13 @@ class Program
         var session = await sessionFactory.CreateAsync(applicationConfiguration,
                                                        configuredEndpoint,
                                                        updateBeforeConnect: false,
-                                                       checkDomain: false,
+                                                       checkDomain: true,
                                                        sessionName: "MinimalClient",
                                                        sessionTimeout: 60000,
                                                        identity: new UserIdentity(),
                                                        preferredLocales: null);
+
+        Console.WriteLine("Connected");
 
         await session.CloseAsync();
     }
