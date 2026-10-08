@@ -31,16 +31,16 @@ class Program
             ApplicationType = ApplicationType.Server,
             ServerConfiguration = new ServerConfiguration
             {
-                BaseAddresses = { baseAddress },
+                BaseAddresses = [ baseAddress ],
                 SecurityPolicies =
-                {
+                [
                     new ServerSecurityPolicy
                     {
                         SecurityMode = MessageSecurityMode.SignAndEncrypt,
                         SecurityPolicyUri = SecurityPolicies.Basic256Sha256
                     }
-                },
-                UserTokenPolicies = { new UserTokenPolicy(UserTokenType.Anonymous) },
+                ],
+                UserTokenPolicies = [ new UserTokenPolicy(UserTokenType.Anonymous) ],
                 MaxRegistrationInterval = 0
             },
             SecurityConfiguration = new SecurityConfiguration
@@ -64,7 +64,7 @@ class Program
         var applicationInstance = new ApplicationInstance(applicationConfiguration, telemetry);
         await applicationInstance.CheckApplicationInstanceCertificatesAsync(false);
 
-        var server = new MinimalServer();
+        var server = new MinimalServer(telemetry);
 
         await applicationInstance.StartAsync(server);
 
@@ -76,6 +76,11 @@ class Program
 
 class MinimalServer : StandardServer
 {
+    public MinimalServer(ITelemetryContext telemetry)
+        : base(telemetry)
+    {
+    }
+
     protected override MasterNodeManager CreateMasterNodeManager(IServerInternal server, ApplicationConfiguration configuration)
     {
         return new MasterNodeManager(server, configuration, null, new MyNodeManager(server, configuration));
@@ -97,14 +102,14 @@ class MyNodeManager : CustomNodeManager2
         {
             NodeId = new NodeId("MyDevice", NamespaceIndex),
             BrowseName = new QualifiedName("MyDevice", NamespaceIndex),
-            DisplayName = "My Device"
+            DisplayName = new LocalizedText("My Device")
         };
 
         var temperature = new BaseDataVariableState(null)
         {
             NodeId = new NodeId("MyDevice.Temperature", NamespaceIndex),
             BrowseName = new QualifiedName("Temperature", NamespaceIndex),
-            DisplayName = "Temperature",
+            DisplayName = new LocalizedText("Temperature"),
             DataType = DataTypeIds.Double,
             Value = 21.5
         };
