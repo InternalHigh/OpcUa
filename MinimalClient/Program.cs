@@ -52,7 +52,12 @@ class Program
 
         var endpoint = await CoreClientUtils.SelectEndpointAsync(applicationConfiguration, discoveryUrl, useSecurity: true, telemetry);
 
-        var configuredEndpoint = new ConfiguredEndpoint(null, endpoint);
+        if (endpoint == null)
+        {
+            throw new InvalidOperationException("No endpoint found");
+        }
+
+        var configuredEndpoint = new ConfiguredEndpoint(collection: null, endpoint, configuration: null);
 
         var sessionFactory = new DefaultSessionFactory(telemetry);
 
@@ -63,7 +68,7 @@ class Program
                                                        sessionName: "MinimalClient",
                                                        sessionTimeout: 60000,
                                                        identity: new UserIdentity(),
-                                                       preferredLocales: null);
+                                                       preferredLocales: []);
 
         Console.WriteLine("Connected");
 
